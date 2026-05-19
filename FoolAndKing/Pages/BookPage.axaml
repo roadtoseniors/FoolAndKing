@@ -1,0 +1,93 @@
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="FoolAndKing.Pages.BookPage">
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0" BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="12,8">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <Button Content="← Назад" Click="OnBackClick" Padding="8,4"/>
+                <TextBlock x:Name="HeaderTitle" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="24,20" Spacing="20">
+                <Grid ColumnDefinitions="160,*" RowDefinitions="Auto">
+                    <Border Grid.Column="0" Width="150" Height="200" CornerRadius="6" ClipToBounds="True" Background="WhiteSmoke">
+                        <Image x:Name="CoverImage" Stretch="UniformToFill"/>
+                    </Border>
+
+                    <StackPanel Grid.Column="1" Margin="20,0,0,0" Spacing="8">
+                        <TextBlock x:Name="BookTitle" FontSize="22" FontWeight="Bold" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="BookAuthor" FontSize="14" Foreground="Gray"/>
+                        <TextBlock x:Name="BookGenres" FontSize="13" Foreground="#666" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="BookScore" FontSize="14" Foreground="#E8A020"/>
+                        <TextBlock x:Name="BookDescription" FontSize="13" TextWrapping="Wrap" Foreground="#333" Margin="0,8,0,0"/>
+
+                        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,12,0,0">
+                            <Button x:Name="BtnFreeze" Content="Заморозить книгу" IsVisible="False" Background="#E74C3C" Foreground="White" Click="OnFreezeBookClick"/>
+                            <Button Content="Пожаловаться на книгу" Click="OnClaimBookClick"/>
+                            <Button Content="Пожаловаться на автора" Click="OnClaimAuthorClick"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+
+                <Expander Header="Читать книгу" Padding="0">
+                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="6" Padding="16" Margin="0,8,0,0">
+                        <TextBlock x:Name="BookText" TextWrapping="Wrap" FontSize="14" LineHeight="22"/>
+                    </Border>
+                </Expander>
+
+                <!-- Отзывы -->
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Отзывы" FontSize="16" FontWeight="SemiBold"/>
+
+                    <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="6" Padding="16">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Оставить отзыв" FontWeight="Medium"/>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="Оценка:" VerticalAlignment="Center"/>
+                                <ComboBox x:Name="ScoreBox" Width="80" SelectedIndex="4">
+                                    <ComboBoxItem Content="1"/>
+                                    <ComboBoxItem Content="2"/>
+                                    <ComboBoxItem Content="3"/>
+                                    <ComboBoxItem Content="4"/>
+                                    <ComboBoxItem Content="5"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <TextBox x:Name="FeedbackText" Watermark="Напишите ваш отзыв..." AcceptsReturn="True" Height="80" TextWrapping="Wrap"/>
+                            <Button Content="Отправить отзыв" HorizontalAlignment="Left" Click="OnSubmitFeedbackClick"/>
+                        </StackPanel>
+                    </Border>
+
+                    <ItemsControl x:Name="FeedbackList">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,8">
+                                    <Grid RowDefinitions="Auto,Auto,Auto">
+                                        <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto">
+                                            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding User.Name}" FontWeight="Medium"/>
+                                                <TextBlock Text="{Binding Score, StringFormat='★ {0}'}" Foreground="#E8A020"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" Text="{Binding CreatedAt, StringFormat='{}{0:dd.MM.yyyy}'}" Foreground="Gray" FontSize="12" VerticalAlignment="Center" Margin="8,0"/>
+                                            
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="4">
+                                                <Button Content="⚑" Padding="4,2" FontSize="12" Tag="{Binding}" Click="OnClaimFeedbackClick" ToolTip.Tip="Пожаловаться на отзыв"/>
+                                                <Button x:Name="BtnFreezeFeedback" Content="❄" Padding="4,2" FontSize="12" Tag="{Binding}" IsVisible="{Binding IsAdmin}" Click="OnFreezeFeedbackClick" ToolTip.Tip="Заморозить отзыв" Foreground="#3498DB"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <TextBlock Grid.Row="1" Text="{Binding Text}" TextWrapping="Wrap" Margin="0,6,0,0"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</ContentPage>

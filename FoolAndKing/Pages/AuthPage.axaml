@@ -1,0 +1,57 @@
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FoolAndKing.Pages.AuthPage">
+    <Grid RowDefinitions="Auto, *">
+        <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="3" Margin="10,10,10,10" CornerRadius="6">
+            <StackPanel Orientation="Horizontal" Margin="10,10,10,10" HorizontalAlignment="Center">
+                <TextBlock Text="Авторизация/Регистрация" FontSize="25"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="3" Margin="10,0,10,10" CornerRadius="6">
+            <TabControl Margin="10">
+                <TabItem Header="Вход">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" MaxWidth="400"
+                          HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+
+                        <TextBlock Grid.Row="0" Text="Логин" Margin="0,0,0,4"/>
+                        <TextBox Grid.Row="1" Name="LoginTextBox" Watermark="Введите логин" Margin="0,0,0,12"/>
+
+                        <TextBlock Grid.Row="2" Text="Пароль" Margin="0,0,0,4"/>
+                        <TextBox Grid.Row="3" Name="PasswordTextBox" Watermark="Введите пароль" PasswordChar="●" Margin="0,0,0,12"/>
+
+                        <TextBlock Grid.Row="4" Name="LoginErrorText" Foreground="Red" TextWrapping="Wrap" IsVisible="False" Margin="0,0,0,8"/>
+
+                        <Button Grid.Row="4" Name="LoginButton" Content="Войти" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,20,0,0" Click="OnLoginClick"/>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Регистрация">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                          MaxWidth="400" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+
+                        <TextBlock Grid.Row="0" Text="Имя" Margin="0,0,0,4"/>
+                        <TextBox Grid.Row="1" Name="RegNameTextBox" Watermark="Введите имя" Margin="0,0,0,12"/>
+
+                        <TextBlock Grid.Row="2" Text="Email" Margin="0,0,0,4"/>
+                        <TextBox Grid.Row="3" Name="RegEmailTextBox" Watermark="Введите email" Margin="0,0,0,12"/>
+
+                        <TextBlock Grid.Row="4" Text="Логин" Margin="0,0,0,4"/>
+                        <TextBox Grid.Row="5" Name="RegLoginTextBox" Watermark="Придумайте логин" Margin="0,0,0,12"/>
+
+                        <TextBlock Grid.Row="6" Text="Пароль" Margin="0,0,0,4"/>
+                        <TextBox Grid.Row="7" Name="RegPasswordTextBox" Watermark="Придумайте пароль" PasswordChar="●" Margin="0,0,0,12"/>
+
+                        <TextBlock Grid.Row="8" Text="Повторите пароль" Margin="0,0,0,4"/>
+                        <TextBox Grid.Row="9" Name="RegPasswordConfirmTextBox" Watermark="Повторите пароль" PasswordChar="●" Margin="0,0,0,12"/>
+                        <TextBlock Grid.Row="10" Name="RegErrorText" Foreground="Red" TextWrapping="Wrap" IsVisible="False" Margin="0,0,0,8"/>
+                        <Button Grid.Row="10" Name="RegisterButton" Content="Зарегистрироваться" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,20,0,0" Click="OnRegisterClick"/>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Border>
+    </Grid>
+</ContentPage>

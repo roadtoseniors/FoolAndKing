@@ -1,0 +1,42 @@
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="FoolAndKing.Pages.MainPage">
+    <Grid ColumnDefinitions="Auto,*">
+        <Border Grid.Column="0" BorderBrush="LightGray" BorderThickness="0,0,1,0" Background="WhiteSmoke">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Top" Spacing="4" Margin="7,8,7,0">
+                    <Button x:Name="BtnCatalog" Width="38" Height="38" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="OnCatalogClick" ToolTip.Tip="Каталог книг">
+                        <Image Source="/Assets/catalog.png" Width="22" Height="22"/>
+                    </Button>
+
+                    <Button x:Name="BtnLists" Width="38" Height="38" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="OnListsClick" ToolTip.Tip="Списки книг">
+                        <Image Source="/Assets/list.png" Width="22" Height="22"/>
+                    </Button>
+
+                    <Button x:Name="BtnAdmin" Width="38" Height="38" Padding="0" IsVisible="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="OnAdminClick" ToolTip.Tip="Администрирование">
+                        <Image Source="/Assets/admin.png" Width="22" Height="22"/>
+                    </Button>
+
+                    <Button x:Name="BtnAuthorPage" Width="38" Height="38" Padding="0" IsVisible="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="OnAuthorPageClick" ToolTip.Tip="Страница автора">
+                        <Image Source="/Assets/author.png" Width="22" Height="22"/>
+                    </Button>
+                </StackPanel>
+
+                <StackPanel DockPanel.Dock="Bottom" Spacing="4" Margin="7,0,7,8">
+                    <Button x:Name="BtnFrozen" Width="38" Height="38" Padding="0" IsVisible="False" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="OnFrozenClick" ToolTip.Tip="Аккаунт заморожен">
+                        <Image Source="/Assets/frozen.png" Width="22" Height="22"/>
+                    </Button>
+
+                    <Button x:Name="BtnProfile" Width="38" Height="38" Padding="0" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Click="OnProfileClick" ToolTip.Tip="Профиль">
+                        <Image Source="/Assets/profile.png" Width="22" Height="22"/>
+                    </Button>
+                </StackPanel>
+                <Border/>
+            </DockPanel>
+        </Border>
+        <ContentControl x:Name="PageContent" Grid.Column="1"/>
+    </Grid>
+</ContentPage>

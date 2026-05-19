@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="FoolAndKing/App.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/MainWindow.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/AdminPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/AuthPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/AutorPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/BookList.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/BookPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/CatalogBook.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/FrozenPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/MainPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/UserPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
