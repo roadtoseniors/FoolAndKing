@@ -101,7 +101,7 @@ public partial class UserPage : ContentPage
         _db.Requests.Add(new Request
         {
             UserId = _currentUser.Id,
-            RoleId = 2, // Автор
+            RoleId = 2,
             Description = text
         });
         _db.SaveChanges();
@@ -124,7 +124,6 @@ public partial class UserPage : ContentPage
             return;
         }
 
-        // Проверка на дубль
         if (_db.Requestfrozens.Any(r => r.UserId == _currentUser.Id))
         {
             AppealStatus.Text = "Заявка уже отправлена.";

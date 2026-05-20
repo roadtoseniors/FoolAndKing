@@ -14,7 +14,6 @@
                 <ComboBoxItem Content="По оценке (ниже)"/>
             </ComboBox>
         </StackPanel>
-
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="16,0,16,8">
             <ItemsControl x:Name="GenreFilter">
                 <ItemsControl.ItemsPanel>
@@ -29,7 +28,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </ScrollViewer>
-
         <ScrollViewer Grid.Row="2" Margin="16,0,16,16">
             <ItemsControl x:Name="BookGrid">
                 <ItemsControl.ItemsPanel>
@@ -51,10 +49,10 @@
                                 </Border>
                                 <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap" MaxLines="2"/>
                                 <TextBlock Text="{Binding Author.Name}" FontSize="11" Foreground="Gray"/>
-                                <TextBlock Text="{Binding AverageScore, StringFormat='★ {0:0.0}'}" FontSize="11" Foreground="#E8A020"/>
+                                <TextBlock Text="{Binding AverageScore, StringFormat='Рейтинг {0:0.0}'}" FontSize="11" Foreground="#E8A020"/>
                                 <Grid ColumnDefinitions="*,Auto">
                                     <Button Grid.Column="0" Content="Открыть" FontSize="11" Padding="6,3" HorizontalAlignment="Stretch" Tag="{Binding}" Click="OnOpenBookClick"/>
-                                    <Button Grid.Column="1" Content="+" FontSize="13" Padding="6,3" Margin="4,0,0,0" Tag="{Binding}" Click="OnAddToListClick" ToolTip.Tip="Добавить в список"/>
+                                    <Button Grid.Column="1" Content="Добавить в список" FontSize="13" Padding="6,3" Margin="4,0,0,0" Tag="{Binding}" Click="OnAddToListClick" ToolTip.Tip="Добавить в список"/>
                                 </Grid>
                             </StackPanel>
                         </Border>

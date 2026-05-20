@@ -46,6 +46,9 @@ build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 [C:/Users/kekmaster/RiderProjects/FoolAndKing/FoolAndKing/Pages/AutorPage.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 
+[C:/Users/kekmaster/RiderProjects/FoolAndKing/FoolAndKing/Pages/BookEditPage.axaml]
+build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
+
 [C:/Users/kekmaster/RiderProjects/FoolAndKing/FoolAndKing/Pages/BookList.axaml]
 build_metadata.AdditionalFiles.SourceItemGroup = AvaloniaXaml
 

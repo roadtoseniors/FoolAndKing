@@ -1,0 +1,57 @@
+﻿<ContentPage xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="FoolAndKing.Pages.BookEditPage">
+    <Grid RowDefinitions="Auto,*">
+
+        <Border Grid.Row="0" BorderBrush="LightGray" BorderThickness="0,0,0,1" Padding="12,8">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <Button Content="Назад" Click="OnBackClick" Padding="8,4"/>
+                <TextBlock x:Name="PageTitle" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="24,20" Spacing="14" MaxWidth="600">
+
+                <TextBlock Text="Название книги"/>
+                <TextBox x:Name="NameBox" Watermark="Введите название..."/>
+
+                <TextBlock Text="Описание"/>
+                <TextBox x:Name="DescriptionBox" Watermark="Введите описание..." AcceptsReturn="True" Height="90" TextWrapping="Wrap"/>
+
+                <TextBlock Text="Путь к обложке"/>
+                <Grid ColumnDefinitions="*,Auto">
+                    <TextBox Grid.Column="0" x:Name="CoverPathBox" Watermark="Путь к файлу обложки..." IsReadOnly="True"/>
+                    <Button Grid.Column="1" Content="Выбрать файл" Margin="8,0,0,0" Padding="10,5" Click="OnPickCoverClick"/>
+                </Grid>
+
+                <TextBlock Text="Текст книги"/>
+                <TextBox x:Name="TextBox" Watermark="Вставьте текст книги..." AcceptsReturn="True" Height="150" TextWrapping="Wrap"/>
+
+                <TextBlock Text="Жанры"/>
+                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="6" Padding="10">
+                    <ItemsControl x:Name="GenreCheckList">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Genre.Name}" IsChecked="{Binding IsSelected}" Margin="0,0,12,6"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+
+                <TextBlock x:Name="StatusText" IsVisible="False" FontSize="13" TextWrapping="Wrap"/>
+
+                <Button x:Name="BtnSave" Content="Сохранить" HorizontalAlignment="Left" Padding="16,8" Click="OnSaveClick"/>
+
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</ContentPage>

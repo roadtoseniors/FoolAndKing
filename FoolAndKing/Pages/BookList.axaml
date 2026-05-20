@@ -2,7 +2,66 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="FoolAndKing.Pages.BookList">
-    
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+        <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="16,12,16,0">
+            <StackPanel Orientation="Horizontal" Spacing="8" x:Name="ListTabsPanel">
+            </StackPanel>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" Margin="16,10,16,0">
+            <TextBox x:Name="SearchBox" Watermark="Поиск по названию или автору..." Width="260" TextChanged="OnSearchChanged"/>
+            <ComboBox x:Name="SortBox" Width="160" SelectedIndex="0" SelectionChanged="OnSortChanged">
+                <ComboBoxItem Content="По названию (А-Я)"/>
+                <ComboBoxItem Content="По названию (Я-А)"/>
+                <ComboBoxItem Content="По оценке (выше)"/>
+                <ComboBoxItem Content="По оценке (ниже)"/>
+            </ComboBox>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="16,8,16,0">
+            <ItemsControl x:Name="GenreFilter">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="6"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ToggleButton Content="{Binding Name}" Tag="{Binding Id}" IsCheckedChanged="OnGenreToggled" Padding="10,4" CornerRadius="12"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <Grid Grid.Row="3">
+            <TextBlock x:Name="EmptyText" Text="В этом списке пока нет книг." Foreground="Gray" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" IsVisible="False"/>
+            <ScrollViewer Margin="16,8,16,16">
+                <ItemsControl x:Name="BookGrid">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,0,12,12" Width="160" Background="White">
+                                <StackPanel Spacing="6">
+                                    <Border Height="90" CornerRadius="4" Background="WhiteSmoke" ClipToBounds="True">
+                                        <Image Source="{Binding CoverPath}" Stretch="UniformToFill"/>
+                                    </Border>
+                                    <TextBlock Text="{Binding BookName}" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap" MaxLines="2"/>
+                                    <TextBlock Text="{Binding AuthorName}" FontSize="11" Foreground="Gray"/>
+                                    <TextBlock Text="{Binding AverageScore, StringFormat='Рейтинг {0:0.0}'}" FontSize="11" Foreground="Yellow"/>
+                                    <ComboBox x:Name="MoveToBox" Tag="{Binding}" FontSize="11" HorizontalAlignment="Stretch" SelectionChanged="OnMoveToListChanged">
+                                    </ComboBox>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
 </ContentPage>

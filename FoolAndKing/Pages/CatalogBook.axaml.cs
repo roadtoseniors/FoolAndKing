@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using System;
+using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Interactivity;
 using FoolAndKing.Context;
@@ -13,20 +14,22 @@ public partial class CatalogBook : ContentPage
 {
     private readonly MyDbContext _db;
     private readonly User _currentUser;
+    private readonly Action<ContentPage>? _navigate;
     private List<BookViewModel> _allBooks = new();
     private readonly HashSet<int> _selectedGenres = new();
+    private bool _isLoaded;
 
-    public CatalogBook() : this(new MyDbContext(), new User()) { }
+    public CatalogBook() : this(new MyDbContext(), new User(), null) { }
 
-    public CatalogBook(MyDbContext db, User user)
+    public CatalogBook(MyDbContext db, User user, Action<ContentPage>? navigate)
     {
         _db = db;
         _currentUser = user;
-    
+        _navigate = navigate;
         InitializeComponent();
-    
         LoadGenres();
         LoadBooks();
+        _isLoaded = true;
     }
 
     private void LoadGenres()
@@ -37,24 +40,17 @@ public partial class CatalogBook : ContentPage
     private void LoadBooks()
     {
         _allBooks = _db.Books
-            .Include(b => b.Author)
-            .Include(b => b.Feedbacks)
-            .Include(b => b.Genrebooks).ThenInclude(gb => gb.Genre)
-            .Where(b => !b.IsFrozen)
-            .AsEnumerable()
-            .Select(b => new BookViewModel(b))
-            .ToList();
-
+            .Include(b => b.Author).Include(b => b.Feedbacks).Include(b => b.Genrebooks).ThenInclude(gb => gb.Genre)
+            .Where(b => !b.IsFrozen).AsEnumerable().Select(b => new BookViewModel(b)).ToList();
         ApplyFilters();
     }
 
     private void ApplyFilters()
     {
-        if (_allBooks is null || BookGrid is null) return;
+        if (!_isLoaded || BookGrid is null) return;
 
         var search = SearchBox?.Text?.Trim().ToLower() ?? "";
-        var sort   = SortBox?.SelectedIndex ?? 0;
-
+        var sort = SortBox?.SelectedIndex ?? 0;
         var filtered = _allBooks.AsEnumerable();
 
         if (!string.IsNullOrEmpty(search))
@@ -78,11 +74,8 @@ public partial class CatalogBook : ContentPage
         BookGrid.ItemsSource = filtered.ToList();
     }
 
-    private void OnSearchChanged(object? sender, TextChangedEventArgs e)
-        => ApplyFilters();
-
-    private void OnSortChanged(object? sender, SelectionChangedEventArgs e)
-        => ApplyFilters();
+    private void OnSearchChanged(object? sender, TextChangedEventArgs e) => ApplyFilters();
+    private void OnSortChanged(object? sender, SelectionChangedEventArgs e) => ApplyFilters();
 
     private void OnGenreToggled(object? sender, RoutedEventArgs e)
     {
@@ -96,8 +89,9 @@ public partial class CatalogBook : ContentPage
 
     private void OnOpenBookClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is Button { Tag: BookViewModel vm })
-            Navigation.PushAsync(new BookPage(_db, _currentUser, vm.Book));
+        if (sender is not Button { Tag: BookViewModel vm }) return;
+        _navigate?.Invoke(new BookPage(_db, _currentUser, vm.Book,
+            () => _navigate?.Invoke(this)));
     }
 
     private async void OnAddToListClick(object? sender, RoutedEventArgs e)
@@ -105,16 +99,9 @@ public partial class CatalogBook : ContentPage
         if (sender is not Button { Tag: BookViewModel vm }) return;
 
         var lists = _db.Readinglists.ToList();
-
-        var dialog = new Window
-        {
-            Title = "Добавить в список",
-            Width = 300,
-            Height = 200,
-            CanResize = false
-        };
-
+        var dialog = new Window { Title = "Добавить в список", Width = 300, Height = 200, CanResize = false };
         var stack = new StackPanel { Margin = new Avalonia.Thickness(16), Spacing = 8 };
+
         stack.Children.Add(new TextBlock
         {
             Text = $"Добавить «{vm.Name}» в список:",
@@ -126,16 +113,14 @@ public partial class CatalogBook : ContentPage
             var btn = new Button
             {
                 Content = list.Name,
-                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch,
-                Tag = list.Id
+                HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch
             };
             btn.Click += (_, _) =>
             {
                 var exists = _db.Userreadinglists.Any(u =>
                     u.UserId == _currentUser.Id &&
-                    u.BookId == vm.Book.Id      &&
+                    u.BookId == vm.Book.Id &&
                     u.ReadingListId == list.Id);
-
                 if (!exists)
                 {
                     _db.Userreadinglists.Add(new Userreadinglist
@@ -152,7 +137,9 @@ public partial class CatalogBook : ContentPage
         }
 
         dialog.Content = stack;
-        await dialog.ShowDialog((Window)this.VisualRoot!);
+        var window = TopLevel.GetTopLevel(this) as Window;
+        if (window is null) return;
+        await dialog.ShowDialog(window);
     }
 }
 
@@ -161,9 +148,10 @@ public class BookViewModel
     public Book Book { get; }
     public string Name => Book.Name;
     public string AuthorName => Book.Author.Name;
-    public User   Author => Book.Author;
+    public User Author => Book.Author;
     public string? CoverPath => Book.CoverPath;
-    public double AverageScore => Book.Feedbacks.Count > 0 ? Book.Feedbacks.Average(f => (double)f.Score) : 0;
+    public double AverageScore => Book.Feedbacks.Count > 0
+        ? Book.Feedbacks.Average(f => (double)f.Score) : 0;
 
     public BookViewModel(Book book) => Book = book;
 }

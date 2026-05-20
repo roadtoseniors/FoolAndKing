@@ -11,39 +11,37 @@ public partial class MainPage : ContentPage
     private readonly User _currentUser;
 
     private readonly CatalogBook _catalogPage;
-    private readonly BookList    _bookListPage;
-    private readonly AdminPage   _adminPage;
-    private readonly AutorPage   _authorPage;
-    private readonly UserPage    _userPage;
-    private readonly FrozenPage  _frozenPage;
+    private readonly BookList _bookListPage;
+    private readonly AdminPage _adminPage;
+    private readonly AutorPage _authorPage;
+    private readonly UserPage _userPage;
+    private readonly FrozenPage _frozenPage;
 
     public MainPage() : this(new MyDbContext(), new User()) { }
 
     public MainPage(MyDbContext db, User user)
     {
         InitializeComponent();
-        _db          = db;
+        _db = db;
         _currentUser = user;
 
-        // Инициализируем страницы
-        _catalogPage  = new CatalogBook();
+        _catalogPage = new CatalogBook(_db, _currentUser, ShowPage);
         _bookListPage = new BookList();
-        _adminPage    = new AdminPage();
-        _authorPage   = new AutorPage();
-        _userPage     = new UserPage();
-        _frozenPage   = new FrozenPage();
+        _adminPage = new AdminPage();
+        _authorPage = new AutorPage(_db, _currentUser, ShowPage);
+        _userPage = new UserPage(_db, _currentUser);
+        _frozenPage = new FrozenPage();
 
         SetupSidebar();
 
-        // Каталог открыт по умолчанию
         ShowPage(_catalogPage);
     }
 
     private void SetupSidebar()
     {
-        BtnAdmin.IsVisible      = _currentUser.RoleId == 3;
+        BtnAdmin.IsVisible = _currentUser.RoleId == 3;
         BtnAuthorPage.IsVisible = _currentUser.RoleId == 2;
-        BtnFrozen.IsVisible     = _currentUser.IsFrozen;
+        BtnFrozen.IsVisible = _currentUser.IsFrozen;
     }
 
     private void ShowPage(ContentPage page)

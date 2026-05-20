@@ -2,7 +2,154 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
              x:Class="FoolAndKing.Pages.AdminPage">
-    Welcome to Avalonia!
+    <Grid>
+        <TabControl x:Name="AdminTabs">
+            <TabItem Header="Жалобы">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" Text="Список жалоб" FontSize="16" FontWeight="SemiBold" Margin="16,12,16,8"/>
+                    <ListBox Grid.Row="1" x:Name="ClaimsList" Margin="16,0,16,16">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" Spacing="4">
+                                            <TextBlock Text="{Binding TypeText}" FontWeight="SemiBold" FontSize="14"/>
+                                            <TextBlock Text="{Binding ReasonText}" Foreground="Gray" FontSize="12"/>
+                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" FontSize="12"/>
+                                            <TextBlock Text="{Binding UserText}" Foreground="Gray" FontSize="11"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="6" Margin="12,0,0,0" VerticalAlignment="Center">
+                                            <Button Content="Принять" Background="#2ECC71" Foreground="White" Padding="10,4" Tag="{Binding}" Click="OnAcceptClaimClick"/>
+                                            <Button Content="Отклонить" Background="#E74C3C" Foreground="White" Padding="10,4" Tag="{Binding}" Click="OnRejectClaimClick"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Снятие заморозки">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" Text="Заявки на снятие заморозки" FontSize="16" FontWeight="SemiBold" Margin="16,12,16,8"/>
+                    <ListBox Grid.Row="1" x:Name="FrozenRequestsList" Margin="16,0,16,16">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" Spacing="4">
+                                            <TextBlock Text="{Binding UserName}" FontWeight="SemiBold" FontSize="14"/>
+                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="6" Margin="12,0,0,0" VerticalAlignment="Center">
+                                            <Button Content="Принять" Background="#2ECC71" Foreground="White" Padding="10,4" Tag="{Binding}" Click="OnAcceptFrozenRequestClick"/>
+                                            <Button Content="Отклонить" Background="#E74C3C" Foreground="White" Padding="10,4" Tag="{Binding}" Click="OnRejectFrozenRequestClick"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="Заявки на автора">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Grid.Row="0" Text="Заявки на роль Автора" FontSize="16" FontWeight="SemiBold" Margin="16,12,16,8"/>
+                    <ListBox Grid.Row="1" x:Name="AuthorRequestsList" Margin="16,0,16,16">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" Spacing="4">
+                                            <TextBlock Text="{Binding UserName}" FontWeight="SemiBold" FontSize="14"/>
+                                            <TextBlock Text="{Binding Description}" TextWrapping="Wrap" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="6" Margin="12,0,0,0" VerticalAlignment="Center">
+                                            <Button Content="Принять" Background="#2ECC71" Foreground="White" Padding="10,4" Tag="{Binding}" Click="OnAcceptAuthorRequestClick"/>
+                                            <Button Content="Отклонить" Background="#E74C3C" Foreground="White" Padding="10,4" Tag="{Binding}" Click="OnRejectAuthorRequestClick"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+            
+            <TabItem Header="Замороженные">
+                <ScrollViewer>
+                    <StackPanel Margin="16,12" Spacing="20">
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Замороженные книги" FontSize="14" FontWeight="SemiBold"/>
+                            <ListBox x:Name="FrozenBooksList">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,6">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <StackPanel Grid.Column="0" Spacing="2">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Medium"/>
+                                                    <TextBlock Text="{Binding AuthorName}" Foreground="Gray" FontSize="12"/>
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Content="Разморозить" VerticalAlignment="Center" Padding="8,4" Tag="{Binding}" Click="OnUnfreezeBookClick"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Text="Замороженные пользователи" FontSize="14" FontWeight="SemiBold"/>
+                            <ListBox x:Name="FrozenUsersList">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="6" Padding="10" Margin="0,0,0,6">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <StackPanel Grid.Column="0" Spacing="2">
+                                                    <TextBlock Text="{Binding Name}" FontWeight="Medium"/>
+                                                    <TextBlock Text="{Binding Login}" Foreground="Gray" FontSize="12"/>
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Content="Разморозить" VerticalAlignment="Center" Padding="8,4" Tag="{Binding}" Click="OnUnfreezeUserClick"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Пользователи">
+                <Grid RowDefinitions="Auto,*">
+                    <TextBox Grid.Row="0" x:Name="UserSearchBox" Watermark="Поиск по имени или логину..." Margin="16,12,16,8" TextChanged="OnUserSearchChanged"/>
+                    <ListBox Grid.Row="1" x:Name="UsersList" Margin="16,0,16,16">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderBrush="LightGray" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,8">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" Spacing="4">
+                                            <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="{Binding LoginEmail}" Foreground="Gray" FontSize="12"/>
+                                            <TextBlock Text="{Binding RoleName}" FontSize="12"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Spacing="6" Margin="12,0,0,0" VerticalAlignment="Center">
+                                            <Button Content="Сменить роль" Padding="8,4" Tag="{Binding}" Click="OnChangeRoleClick"/>
+                                            <Button Content="Сменить пароль" Padding="8,4" Tag="{Binding}" Click="OnChangePasswordClick"/>
+                                            <Button Content="Заморозить" Background="#E74C3C" Foreground="White" Padding="8,4" Tag="{Binding}" IsVisible="{Binding IsNotFrozen}" Click="OnFreezeUserClick"/>
+                                            <Button Content="Разморозить" Background="#2ECC71" Foreground="White" Padding="8,4" Tag="{Binding}" IsVisible="{Binding IsFrozen}" Click="OnUnfreezeUserClick"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
 </ContentPage>

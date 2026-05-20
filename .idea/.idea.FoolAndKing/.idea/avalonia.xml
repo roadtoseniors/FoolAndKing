@@ -8,6 +8,7 @@
         <entry key="FoolAndKing/Pages/AdminPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
         <entry key="FoolAndKing/Pages/AuthPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
         <entry key="FoolAndKing/Pages/AutorPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
+        <entry key="FoolAndKing/Pages/BookEditPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
         <entry key="FoolAndKing/Pages/BookList.axaml" value="FoolAndKing/FoolAndKing.csproj" />
         <entry key="FoolAndKing/Pages/BookPage.axaml" value="FoolAndKing/FoolAndKing.csproj" />
         <entry key="FoolAndKing/Pages/CatalogBook.axaml" value="FoolAndKing/FoolAndKing.csproj" />

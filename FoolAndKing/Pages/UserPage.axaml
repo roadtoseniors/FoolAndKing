@@ -71,7 +71,7 @@
                                 <StackPanel Spacing="4">
                                     <StackPanel Orientation="Horizontal" Spacing="10">
                                         <TextBlock Text="{Binding BookName}" FontWeight="Medium"/>
-                                        <TextBlock Text="{Binding Score, StringFormat='★ {0}'}" Foreground="#E8A020"/>
+                                        <TextBlock Text="{Binding Score, StringFormat='Рейтинг {0}'}" Foreground="#E8A020"/>
                                         <TextBlock Text="{Binding CreatedAt, StringFormat='{}{0:dd.MM.yyyy}'}" Foreground="Gray" FontSize="12" VerticalAlignment="Center"/>
                                     </StackPanel>
                                     <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Foreground="#333" FontSize="13"/>
