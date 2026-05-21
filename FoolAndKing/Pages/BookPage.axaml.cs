@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
@@ -31,10 +32,8 @@ public partial class BookPage : ContentPage
     private void LoadBook()
     {
         _book = _db.Books
-            .Include(b => b.Author)
-            .Include(b => b.Feedbacks).ThenInclude(f => f.User)
-            .Include(b => b.Genrebooks).ThenInclude(gb => gb.Genre)
-            .First(b => b.Id == _book.Id);
+            .Include(b => b.Author).Include(b => b.Feedbacks).ThenInclude(f => f.User)
+            .Include(b => b.Genrebooks).ThenInclude(gb => gb.Genre).First(b => b.Id == _book.Id);
 
         HeaderTitle.Text = _book.Name;
         BookTitle.Text = _book.Name;
@@ -50,8 +49,14 @@ public partial class BookPage : ContentPage
 
         if (!string.IsNullOrEmpty(_book.CoverPath))
         {
-            try { CoverImage.Source = new Bitmap(_book.CoverPath); }
-            catch { /* файл не найден — просто не показываем */ }
+            try
+            {
+                CoverImage.Source = new Bitmap(_book.CoverPath);
+            }
+            catch
+            {
+                
+            }
         }
 
         BtnFreeze.IsVisible = _currentUser.RoleId == 3;
@@ -65,7 +70,7 @@ public partial class BookPage : ContentPage
     {
         FeedbackList.ItemsSource = _book.Feedbacks
             .OrderByDescending(f => f.CreatedAt)
-            .Select(f => new FeedbackViewModel(f, _currentUser.RoleId == 3))
+            .Select(f => new FeedbackModel(f, _currentUser.RoleId == 3))
             .ToList();
     }
 
@@ -103,20 +108,26 @@ public partial class BookPage : ContentPage
     }
 
     private async void OnClaimBookClick(object? sender, RoutedEventArgs e)
-        => await ShowClaimDialog(bookId: _book.Id, feedbackId: null);
+    {
+        await ShowClaimDialog(bookId: _book.Id, feedbackId: null);
+    }
 
     private async void OnClaimAuthorClick(object? sender, RoutedEventArgs e)
-        => await ShowClaimDialog(bookId: _book.Id, feedbackId: null, isAuthorClaim: true);
+    {
+        await ShowClaimDialog(bookId: _book.Id, feedbackId: null, isAuthorClaim: true);
+    }
 
     private async void OnClaimFeedbackClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is Button { Tag: FeedbackViewModel vm })
+        if (sender is Button { Tag: FeedbackModel vm })
+        {
             await ShowClaimDialog(bookId: null, feedbackId: vm.Feedback.Id);
+        }
     }
 
     private void OnFreezeFeedbackClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: FeedbackViewModel vm }) return;
+        if (sender is not Button { Tag: FeedbackModel vm }) return;
 
         var fb = _db.Feedbacks
             .Include(f => f.Claims)
@@ -130,7 +141,7 @@ public partial class BookPage : ContentPage
         LoadBook();
     }
 
-    private async System.Threading.Tasks.Task ShowClaimDialog(int? bookId, int? feedbackId, bool isAuthorClaim = false)
+    private async Task ShowClaimDialog(int? bookId, int? feedbackId, bool isAuthorClaim = false)
     {
         var reasons = _db.Reasons.ToList();
 
@@ -184,7 +195,7 @@ public partial class BookPage : ContentPage
     }
 }
 
-public class FeedbackViewModel
+public class FeedbackModel
 {
     public Feedback Feedback { get; }
     public User User => Feedback.User;
@@ -193,7 +204,7 @@ public class FeedbackViewModel
     public DateTime CreatedAt => Feedback.CreatedAt;
     public bool IsAdmin { get; }
 
-    public FeedbackViewModel(Feedback feedback, bool isAdmin)
+    public FeedbackModel(Feedback feedback, bool isAdmin)
     {
         Feedback = feedback;
         IsAdmin = isAdmin;

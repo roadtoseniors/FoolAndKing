@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -13,10 +14,11 @@ public partial class BookList : ContentPage
 {
     private readonly MyDbContext _db;
     private readonly User _currentUser;
+    private readonly Action<ContentPage>? _navigate;
     private List<Readinglist> _readinglists = new();
     private int _currentListId;
     private readonly HashSet<int> _selectedGenres = new();
-    private List<BookListItemViewModel> _currentBooks = new();
+    private List<BookListItemModel> _currentBooks = new();
     private bool _isLoaded;
 
     public BookList() : this(new MyDbContext(), new User()) { }
@@ -29,6 +31,11 @@ public partial class BookList : ContentPage
         _isLoaded = true;
         LoadGenres();
         LoadReadinglists();
+    }
+
+    public void Refresh()
+    {
+        LoadBooks();
     }
 
     private void LoadReadinglists()
@@ -54,7 +61,7 @@ public partial class BookList : ContentPage
         if (ListTabsPanel.Children[0] is ToggleButton first)
             first.IsChecked = true;
         else
-            LoadBooks(); // на случай если IsChecked не сработал
+            LoadBooks();
     }
 
     private void OnListTabChanged(object? sender, RoutedEventArgs e)
@@ -76,12 +83,10 @@ public partial class BookList : ContentPage
 
     private void OnGenreToggled(object? sender, RoutedEventArgs e)
     {
-        if (sender is ToggleButton { Tag: int genreId } tb)
-        {
-            if (tb.IsChecked == true) _selectedGenres.Add(genreId);
-            else _selectedGenres.Remove(genreId);
-            ApplyFilters();
-        }
+        if (sender is not ToggleButton { Tag: int genreId } tb) return;
+        if (tb.IsChecked == true) _selectedGenres.Add(genreId);
+        else _selectedGenres.Remove(genreId);
+        ApplyFilters();
     }
 
     private void LoadBooks()
@@ -92,7 +97,7 @@ public partial class BookList : ContentPage
             .Include(u => u.Book).ThenInclude(b => b.Genrebooks).ThenInclude(gb => gb.Genre)
             .Where(u => u.UserId == _currentUser.Id && u.ReadingListId == _currentListId)
             .AsEnumerable()
-            .Select(u => new BookListItemViewModel(u, _readinglists))
+            .Select(u => new BookListItemModel(u, _readinglists))
             .ToList();
 
         ApplyFilters();
@@ -131,21 +136,18 @@ public partial class BookList : ContentPage
 
     private void OnSearchChanged(object? sender, TextChangedEventArgs e)
     {
-        if (!_isLoaded) return;
-        ApplyFilters();
+        if (_isLoaded) ApplyFilters();
     }
 
     private void OnSortChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (!_isLoaded) return;
-        ApplyFilters();
+        if (_isLoaded) ApplyFilters();
     }
 
     private void OnMoveToListChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (!_isLoaded) return;
-        if (sender is not ComboBox { Tag: BookListItemViewModel vm,
-            SelectedItem: Readinglist targetList }) return;
+        if (sender is not ComboBox { Tag: BookListItemModel vm, SelectedItem: Readinglist targetList }) return;
         if (targetList.Id == _currentListId) return;
 
         var entry = _db.Userreadinglists.Find(vm.Entry.Id);
@@ -162,9 +164,16 @@ public partial class BookList : ContentPage
         _db.SaveChanges();
         LoadBooks();
     }
+
+    private void OpenBookPage_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: BookModel vm }) return;
+        _navigate?.Invoke(new BookPage(_db, _currentUser, vm.Book,
+            () => _navigate?.Invoke(this)));
+    }
 }
 
-public class BookListItemViewModel
+public class BookListItemModel
 {
     public Userreadinglist Entry { get; }
     public string BookName => Entry.Book.Name;
@@ -175,7 +184,7 @@ public class BookListItemViewModel
     public string AverageScoreText => $"Рейтинг {AverageScore:0.0}";
     public List<Readinglist> OtherLists { get; }
 
-    public BookListItemViewModel(Userreadinglist entry, List<Readinglist> allLists)
+    public BookListItemModel(Userreadinglist entry, List<Readinglist> allLists)
     {
         Entry = entry;
         OtherLists = allLists.ToList();

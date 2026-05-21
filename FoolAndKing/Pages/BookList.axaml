@@ -53,6 +53,7 @@
                                     <TextBlock Text="{Binding AuthorName}" FontSize="11" Foreground="Gray"/>
                                     <TextBlock Text="{Binding AverageScoreText}" FontSize="11" Foreground="#E8A020"/>
                                     <ComboBox ItemsSource="{Binding OtherLists}" DisplayMemberBinding="{Binding Name}" PlaceholderText="Переместить в..." Tag="{Binding}" FontSize="11" HorizontalAlignment="Stretch" SelectionChanged="OnMoveToListChanged"/>
+                                    <Button x:Name="OpenBookPage" Content="Открыть" FontSize="11" Padding="6,3" HorizontalAlignment="Stretch" Click="OpenBookPage_OnClick"/>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>

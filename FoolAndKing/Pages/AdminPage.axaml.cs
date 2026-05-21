@@ -11,7 +11,7 @@ namespace FoolAndKing.Pages;
 public partial class AdminPage : ContentPage
 {
     private readonly MyDbContext _db;
-    private List<AdminUserViewModel> _allUsers = new();
+    private List<AdminUserModel> _allUsers = new();
 
     public AdminPage() : this(new MyDbContext()) { }
 
@@ -19,6 +19,11 @@ public partial class AdminPage : ContentPage
     {
         InitializeComponent();
         _db = db;
+        LoadAll();
+    }
+
+    public void Refresh()
+    {
         LoadAll();
     }
 
@@ -34,13 +39,13 @@ public partial class AdminPage : ContentPage
     private void LoadClaims()
     {
         var claims = _db.Claims.Include(c => c.User).Include(c => c.Reason)
-            .Include(c => c.Book).Include(c => c.FeedBack).ToList().Select(c => new ClaimViewModel(c)).ToList();
+            .Include(c => c.Book).Include(c => c.FeedBack).ToList().Select(c => new ClaimModel(c)).ToList();
         ClaimsList.ItemsSource = claims;
     }
 
     private void OnAcceptClaimClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: ClaimViewModel vm })
+        if (sender is not Button { Tag: ClaimModel vm })
         {
             return;
         }
@@ -58,7 +63,7 @@ public partial class AdminPage : ContentPage
 
     private void OnRejectClaimClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: ClaimViewModel vm }) return;
+        if (sender is not Button { Tag: ClaimModel vm }) return;
         _db.Claims.Remove(vm.Claim);
         _db.SaveChanges();
         LoadClaims();
@@ -67,13 +72,13 @@ public partial class AdminPage : ContentPage
     private void LoadFrozenRequests()
     {
         var requests = _db.Requestfrozens.Include(r => r.User)
-            .ToList().Select(r => new FrozenRequestViewModel(r)).ToList();
+            .ToList().Select(r => new FrozenRequestModel(r)).ToList();
         FrozenRequestsList.ItemsSource = requests;
     }
 
     private void OnAcceptFrozenRequestClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: FrozenRequestViewModel vm }) return;
+        if (sender is not Button { Tag: FrozenRequestModel vm }) return;
         var user = _db.Users.Find(vm.Request.UserId);
         if (user is not null) user.IsFrozen = false;
         _db.Requestfrozens.Remove(vm.Request);
@@ -85,7 +90,7 @@ public partial class AdminPage : ContentPage
 
     private void OnRejectFrozenRequestClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: FrozenRequestViewModel vm }) return;
+        if (sender is not Button { Tag: FrozenRequestModel vm }) return;
         _db.Requestfrozens.Remove(vm.Request);
         _db.SaveChanges();
         LoadFrozenRequests();
@@ -95,13 +100,13 @@ public partial class AdminPage : ContentPage
     {
         var requests = _db.Requests
             .Include(r => r.User).Where(r => r.RoleId == 2).ToList()
-            .Select(r => new AuthorRequestViewModel(r)).ToList();
+            .Select(r => new AuthorRequestModel(r)).ToList();
         AuthorRequestsList.ItemsSource = requests;
     }
 
     private void OnAcceptAuthorRequestClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: AuthorRequestViewModel vm }) return;
+        if (sender is not Button { Tag: AuthorRequestModel vm }) return;
         var user = _db.Users.Find(vm.Request.UserId);
         if (user is not null) user.RoleId = 2;
         _db.Requests.Remove(vm.Request);
@@ -112,7 +117,7 @@ public partial class AdminPage : ContentPage
 
     private void OnRejectAuthorRequestClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: AuthorRequestViewModel vm }) return;
+        if (sender is not Button { Tag: AuthorRequestModel vm }) return;
         _db.Requests.Remove(vm.Request);
         _db.SaveChanges();
         LoadAuthorRequests();
@@ -121,14 +126,14 @@ public partial class AdminPage : ContentPage
     private void LoadFrozen()
     {
         FrozenBooksList.ItemsSource = _db.Books.Include(b => b.Author).Where(b => b.IsFrozen)
-            .ToList().Select(b => new FrozenBookViewModel(b)).ToList();
+            .ToList().Select(b => new FrozenBookModel(b)).ToList();
 
         FrozenUsersList.ItemsSource = _db.Users.Where(u => u.IsFrozen).ToList();
     }
 
     private void OnUnfreezeBookClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: FrozenBookViewModel vm }) return;
+        if (sender is not Button { Tag: FrozenBookModel vm }) return;
         var book = _db.Books.Find(vm.Book.Id);
         if (book is not null) book.IsFrozen = false;
         _db.SaveChanges();
@@ -148,7 +153,7 @@ public partial class AdminPage : ContentPage
 
     private void LoadUsers(string? search = null)
     {
-        _allUsers = _db.Users.Include(u => u.Role).ToList().Select(u => new AdminUserViewModel(u)).ToList();
+        _allUsers = _db.Users.Include(u => u.Role).ToList().Select(u => new AdminUserModel(u)).ToList();
 
         if (!string.IsNullOrWhiteSpace(search))
             _allUsers = _allUsers.Where(u =>
@@ -163,7 +168,7 @@ public partial class AdminPage : ContentPage
 
     private async void OnChangeRoleClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: AdminUserViewModel vm }) return;
+        if (sender is not Button { Tag: AdminUserModel vm }) return;
 
         var dialog = new Window { Title = "Сменить роль", Width = 300, Height = 180, CanResize = false };
         var stack = new StackPanel { Margin = new Avalonia.Thickness(16), Spacing = 10 };
@@ -199,7 +204,7 @@ public partial class AdminPage : ContentPage
 
     private async void OnChangePasswordClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: AdminUserViewModel vm }) return;
+        if (sender is not Button { Tag: AdminUserModel vm }) return;
 
         var dialog = new Window { Title = "Сменить пароль", Width = 320, Height = 200, CanResize = false };
         var stack = new StackPanel { Margin = new Avalonia.Thickness(16), Spacing = 10 };
@@ -237,7 +242,7 @@ public partial class AdminPage : ContentPage
 
     private void OnFreezeUserClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: AdminUserViewModel vm }) return;
+        if (sender is not Button { Tag: AdminUserModel vm }) return;
         var user = _db.Users.Find(vm.User.Id);
         if (user is not null) user.IsFrozen = true;
         _db.SaveChanges();
@@ -246,7 +251,7 @@ public partial class AdminPage : ContentPage
     }
 }
 
-public class ClaimViewModel
+public class ClaimModel
 {
     public Claim Claim { get; }
     public string TypeText => Claim.BookId is not null ? $"Жалоба на книгу: {Claim.Book?.Name}"
@@ -255,37 +260,37 @@ public class ClaimViewModel
     public string? Description => Claim.Description;
     public string UserText => $"От: {Claim.User.Name} ({Claim.User.Login})";
 
-    public ClaimViewModel(Claim claim) => Claim = claim;
+    public ClaimModel(Claim claim) => Claim = claim;
 }
 
-public class FrozenRequestViewModel
+public class FrozenRequestModel
 {
     public Requestfrozen Request { get; }
     public string UserName => Request.User.Name;
     public string? Description => Request.Description;
 
-    public FrozenRequestViewModel(Requestfrozen request) => Request = request;
+    public FrozenRequestModel(Requestfrozen request) => Request = request;
 }
 
-public class AuthorRequestViewModel
+public class AuthorRequestModel
 {
     public Request Request { get; }
     public string UserName => Request.User.Name;
     public string? Description => Request.Description;
 
-    public AuthorRequestViewModel(Request request) => Request = request;
+    public AuthorRequestModel(Request request) => Request = request;
 }
 
-public class FrozenBookViewModel
+public class FrozenBookModel
 {
     public Book Book { get; }
     public string Name => Book.Name;
     public string AuthorName => Book.Author.Name;
 
-    public FrozenBookViewModel(Book book) => Book = book;
+    public FrozenBookModel(Book book) => Book = book;
 }
 
-public class AdminUserViewModel
+public class AdminUserModel
 {
     public User User { get; }
     public string Name => User.Name;
@@ -294,5 +299,5 @@ public class AdminUserViewModel
     public bool IsFrozen => User.IsFrozen;
     public bool IsNotFrozen => !User.IsFrozen;
 
-    public AdminUserViewModel(User user) => User = user;
+    public AdminUserModel(User user) => User = user;
 }

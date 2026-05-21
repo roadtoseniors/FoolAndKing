@@ -47,23 +47,55 @@ public partial class MainPage : ContentPage
     private void ShowPage(ContentPage page)
     {
         PageContent.Content = page;
+        
+        switch (page)
+        {
+            case CatalogBook p: 
+                p.Refresh(); 
+                break;
+            case BookList p: 
+                p.Refresh(); 
+                break;
+            case AdminPage p: 
+                p.Refresh(); 
+                break;
+            case AutorPage p: 
+                p.Refresh(); 
+                break;
+            case UserPage p: 
+                p.Refresh(); 
+                break;
+        }
     }
+    
 
     private void OnCatalogClick(object? sender, RoutedEventArgs e)
-        => ShowPage(_catalogPage);
+    {
+        ShowPage(_catalogPage);
+    }
 
     private void OnListsClick(object? sender, RoutedEventArgs e)
-        => ShowPage(_bookListPage);
+    {
+        ShowPage(_bookListPage);
+    }
 
     private void OnAdminClick(object? sender, RoutedEventArgs e)
-        => ShowPage(_adminPage);
+    {
+        ShowPage(_adminPage);
+    }
 
     private void OnAuthorPageClick(object? sender, RoutedEventArgs e)
-        => ShowPage(_authorPage);
+    {
+        ShowPage(_authorPage);
+    }
 
     private void OnFrozenClick(object? sender, RoutedEventArgs e)
-        => ShowPage(_frozenPage);
+    {
+        ShowPage(_frozenPage);
+    }
 
     private void OnProfileClick(object? sender, RoutedEventArgs e)
-        => ShowPage(_userPage);
+    {
+        ShowPage(_userPage);
+    }
 }

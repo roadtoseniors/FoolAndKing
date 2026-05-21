@@ -1,8 +1,6 @@
 ﻿using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using FoolAndKing.Context;
 using FoolAndKing.Entities;
@@ -12,27 +10,48 @@ namespace FoolAndKing.Pages;
 public partial class AuthPage : ContentPage
 {
     private readonly MyDbContext _db;
-    
+
     public AuthPage() : this(new MyDbContext()) { }
-    
+
     public AuthPage(MyDbContext db)
     {
         InitializeComponent();
         _db = db;
     }
 
+    private void OnLoginClick(object? sender, RoutedEventArgs e)
+    {
+        var login = LoginTextBox.Text?.Trim();
+        var password = PasswordTextBox.Text;
+
+        if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+        {
+            ShowLoginError("Заполните все поля.");
+            return;
+        }
+
+        var user = _db.Users.FirstOrDefault(u => u.Login == login && u.Password == password);
+
+        if (user is null)
+        {
+            ShowLoginError("Неверный логин или пароль.");
+            return;
+        }
+
+        Navigation.PushAsync(new MainPage(_db, user));
+    }
+
     private void OnRegisterClick(object? sender, RoutedEventArgs e)
     {
-        var name  = RegNameTextBox.Text?.Trim();
-        var email= RegEmailTextBox.Text?.Trim();
-        var login= RegLoginTextBox.Text?.Trim();
-        var password= RegPasswordTextBox.Text;
-        var confirm= RegPasswordConfirmTextBox.Text;
+        var name = RegNameTextBox.Text?.Trim();
+        var email = RegEmailTextBox.Text?.Trim();
+        var login = RegLoginTextBox.Text?.Trim();
+        var password = RegPasswordTextBox.Text;
+        var confirm = RegPasswordConfirmTextBox.Text;
 
-        RegErrorText.IsVisible = false;
         RegErrorText.Foreground = Brushes.Red;
 
-        if (string.IsNullOrEmpty(name)  || string.IsNullOrEmpty(email) ||
+        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(email) ||
             string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
         {
             ShowRegError("Заполните все поля.");
@@ -63,7 +82,7 @@ public partial class AuthPage : ContentPage
             Login = login,
             Password = password,
             Email = email,
-            RoleId = 2,
+            RoleId = 1,
             IsFrozen = false
         });
         _db.SaveChanges();
@@ -72,38 +91,15 @@ public partial class AuthPage : ContentPage
         ShowRegError("Регистрация прошла успешно! Теперь войдите.");
     }
 
-    private void OnLoginClick(object? sender, RoutedEventArgs e)
-    {
-        var login = LoginTextBox.Text?.Trim();
-        var password = PasswordTextBox.Text;
-
-        LoginErrorText.IsVisible = false;
-
-        if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
-        {
-            ShowLoginError("Заполните все поля.");
-            return;
-        }
-
-        var user = _db.Users.FirstOrDefault(u => u.Login == login && u.Password == password);
-
-        if (user is null)
-        {
-            ShowLoginError("Неверный логин или пароль.");
-            return;
-        }
-        Navigation.PushAsync(new MainPage(_db, user));
-    }
-    
     private void ShowLoginError(string msg)
     {
-        LoginErrorText.Text      = msg;
+        LoginErrorText.Text = msg;
         LoginErrorText.IsVisible = true;
     }
 
     private void ShowRegError(string msg)
     {
-        RegErrorText.Text      = msg;
+        RegErrorText.Text = msg;
         RegErrorText.IsVisible = true;
     }
 }

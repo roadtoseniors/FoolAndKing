@@ -29,6 +29,14 @@ public partial class UserPage : ContentPage
         SetupAuthorRequest();
     }
 
+    public void Refresh()
+    {
+        LoadProfile();
+        LoadFeedbacks();
+        SetupFrozenBanner();
+        SetupAuthorRequest();
+    }
+
     private void LoadProfile()
     {
         LblName.Text = _currentUser.Name;
@@ -154,7 +162,7 @@ public partial class UserPage : ContentPage
             .Include(f => f.Book)
             .Where(f => f.UserId == _currentUser.Id)
             .OrderByDescending(f => f.CreatedAt)
-            .Select(f => new UserFeedbackViewModel
+            .Select(f => new UserFeedbackModel
             {
                 BookName = f.Book.Name,
                 Text = f.Text,
@@ -177,7 +185,7 @@ public partial class UserPage : ContentPage
     }
 }
 
-public class UserFeedbackViewModel
+public class UserFeedbackModel
 {
     public string BookName { get; init; } = "";
     public string Text { get; init; } = "";

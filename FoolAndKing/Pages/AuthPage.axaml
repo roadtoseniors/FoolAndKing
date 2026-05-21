@@ -15,36 +15,28 @@
                 <TabItem Header="Вход">
                     <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" MaxWidth="400" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
                         <TextBlock Grid.Row="0" Text="Логин" Margin="0,0,0,4"/>
-                        <TextBox Grid.Row="1" Name="LoginTextBox" Watermark="Введите логин" Margin="0,0,0,12"/>
-
+                        <TextBox Grid.Row="1" x:Name="LoginTextBox" Watermark="Введите логин" Margin="0,0,0,12"/>
                         <TextBlock Grid.Row="2" Text="Пароль" Margin="0,0,0,4"/>
-                        <TextBox Grid.Row="3" Name="PasswordTextBox" Watermark="Введите пароль" PasswordChar="*" Margin="0,0,0,12"/>
-
-                        <TextBlock Grid.Row="4" Name="LoginErrorText" Foreground="Red" TextWrapping="Wrap" IsVisible="False" Margin="0,0,0,8"/>
-
-                        <Button Grid.Row="4" Name="LoginButton" Content="Войти" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,20,0,0" Click="OnLoginClick"/>
+                        <TextBox Grid.Row="3" x:Name="PasswordTextBox" Watermark="Введите пароль" PasswordChar="*" Margin="0,0,0,12"/>
+                        <TextBlock Grid.Row="4" x:Name="LoginErrorText" Foreground="Red" TextWrapping="Wrap" IsVisible="False" Margin="0,0,0,8"/>
+                        <Button Grid.Row="4" x:Name="LoginButton" Content="Войти" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,20,0,0" Click="OnLoginClick"/>
                     </Grid>
                 </TabItem>
 
                 <TabItem Header="Регистрация">
-                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
-                          MaxWidth="400" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
-
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" MaxWidth="400" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
                         <TextBlock Grid.Row="0" Text="Имя" Margin="0,0,0,4"/>
-                        <TextBox Grid.Row="1" Name="RegNameTextBox" Watermark="Введите имя" Margin="0,0,0,12"/>
-
+                        <TextBox Grid.Row="1" x:Name="RegNameTextBox" Watermark="Введите имя" Margin="0,0,0,12"/>
                         <TextBlock Grid.Row="2" Text="Email" Margin="0,0,0,4"/>
-                        <TextBox Grid.Row="3" Name="RegEmailTextBox" Watermark="Введите email" Margin="0,0,0,12"/>
-
+                        <TextBox Grid.Row="3" x:Name="RegEmailTextBox" Watermark="Введите email" Margin="0,0,0,12"/>
                         <TextBlock Grid.Row="4" Text="Логин" Margin="0,0,0,4"/>
-                        <TextBox Grid.Row="5" Name="RegLoginTextBox" Watermark="Придумайте логин" Margin="0,0,0,12"/>
-
+                        <TextBox Grid.Row="5" x:Name="RegLoginTextBox" Watermark="Придумайте логин" Margin="0,0,0,12"/>
                         <TextBlock Grid.Row="6" Text="Пароль" Margin="0,0,0,4"/>
-                        <TextBox Grid.Row="7" Name="RegPasswordTextBox" Watermark="Придумайте пароль" PasswordChar="*" Margin="0,0,0,12"/>
+                        <TextBox Grid.Row="7" x:Name="RegPasswordTextBox" Watermark="Придумайте пароль" PasswordChar="*" Margin="0,0,0,12"/>
                         <TextBlock Grid.Row="8" Text="Повторите пароль" Margin="0,0,0,4"/>
-                        <TextBox Grid.Row="9" Name="RegPasswordConfirmTextBox" Watermark="Повторите пароль" PasswordChar="*" Margin="0,0,0,12"/>
-                        <TextBlock Grid.Row="10" Name="RegErrorText" Foreground="Red" TextWrapping="Wrap" IsVisible="False" Margin="0,0,0,8"/>
-                        <Button Grid.Row="10" Name="RegisterButton" Content="Зарегистрироваться" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,20,0,0" Click="OnRegisterClick"/>
+                        <TextBox Grid.Row="9" x:Name="RegPasswordConfirmTextBox" Watermark="Повторите пароль" PasswordChar="*" Margin="0,0,0,12"/>
+                        <TextBlock Grid.Row="10" x:Name="RegErrorText" Foreground="Red" TextWrapping="Wrap" IsVisible="False" Margin="0,0,0,8"/>
+                        <Button Grid.Row="10" x:Name="RegisterButton" Content="Зарегистрироваться" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,20,0,0" Click="OnRegisterClick"/>
                     </Grid>
                 </TabItem>
             </TabControl>

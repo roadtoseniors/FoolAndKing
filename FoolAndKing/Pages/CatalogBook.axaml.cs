@@ -15,7 +15,7 @@ public partial class CatalogBook : ContentPage
     private readonly MyDbContext _db;
     private readonly User _currentUser;
     private readonly Action<ContentPage>? _navigate;
-    private List<BookViewModel> _allBooks = new();
+    private List<BookModel> _allBooks = new();
     private readonly HashSet<int> _selectedGenres = new();
     private bool _isLoaded;
 
@@ -27,8 +27,13 @@ public partial class CatalogBook : ContentPage
         _currentUser = user;
         _navigate = navigate;
         InitializeComponent();
-        _isLoaded = true; // ставим ДО загрузки
+        _isLoaded = true;
         LoadGenres();
+        LoadBooks();
+    }
+
+    public void Refresh()
+    {
         LoadBooks();
     }
 
@@ -41,13 +46,13 @@ public partial class CatalogBook : ContentPage
     {
         _allBooks = _db.Books
             .Include(b => b.Author).Include(b => b.Feedbacks).Include(b => b.Genrebooks).ThenInclude(gb => gb.Genre)
-            .Where(b => !b.IsFrozen).AsEnumerable().Select(b => new BookViewModel(b)).ToList();
+            .Where(b => !b.IsFrozen).AsEnumerable().Select(b => new BookModel(b)).ToList();
         ApplyFilters();
     }
 
     private void ApplyFilters()
     {
-        if (BookGrid is null) return; // убрали проверку _isLoaded
+        if (BookGrid is null) return;
 
         var search = SearchBox?.Text?.Trim().ToLower() ?? "";
         var sort = SortBox?.SelectedIndex ?? 0;
@@ -81,7 +86,7 @@ public partial class CatalogBook : ContentPage
     }
     private void OnSortChanged(object? sender, SelectionChangedEventArgs e)
     {
-        if (!_isLoaded) return; // флаг только здесь
+        if (!_isLoaded) return;
         ApplyFilters();
     }
 
@@ -98,14 +103,14 @@ public partial class CatalogBook : ContentPage
 
     private void OnOpenBookClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: BookViewModel vm }) return;
+        if (sender is not Button { Tag: BookModel vm }) return;
         _navigate?.Invoke(new BookPage(_db, _currentUser, vm.Book,
             () => _navigate?.Invoke(this)));
     }
 
     private async void OnAddToListClick(object? sender, RoutedEventArgs e)
     {
-        if (sender is not Button { Tag: BookViewModel vm }) return;
+        if (sender is not Button { Tag: BookModel vm }) return;
 
         var lists = _db.Readinglists.ToList();
         var dialog = new Window { Title = "Добавить в список", Width = 300, Height = 200, CanResize = false };
@@ -152,7 +157,7 @@ public partial class CatalogBook : ContentPage
     }
 }
 
-public class BookViewModel
+public class BookModel
 {
     public Book Book { get; }
     public string Name => Book.Name;
@@ -162,5 +167,5 @@ public class BookViewModel
     public double AverageScore => Book.Feedbacks.Count > 0
         ? Book.Feedbacks.Average(f => (double)f.Score) : 0;
 
-    public BookViewModel(Book book) => Book = book;
+    public BookModel(Book book) => Book = book;
 }

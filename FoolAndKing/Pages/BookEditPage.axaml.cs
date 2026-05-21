@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using FoolAndKing.Context;
 using FoolAndKing.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -39,12 +41,10 @@ public partial class BookEditPage : ContentPage
 
     private void LoadGenres()
     {
-        var allGenres = _db.Genres.ToList();
-        var selectedIds = _existingBook is null
-            ? new HashSet<int>()
+        var selectedIds = _existingBook is null ? new HashSet<int>()
             : _existingBook.Genrebooks.Select(gb => gb.GenreId).ToHashSet();
 
-        _genres = allGenres.Select(g => new GenreCheckItem
+        _genres = _db.Genres.ToList().Select(g => new GenreCheckItem
         {
             Genre = g,
             IsSelected = selectedIds.Contains(g.Id)
@@ -68,19 +68,18 @@ public partial class BookEditPage : ContentPage
         var topLevel = TopLevel.GetTopLevel(this);
         if (topLevel is null) return;
 
-        var files = await topLevel.StorageProvider.OpenFilePickerAsync(
-            new FilePickerOpenOptions
+        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+        {
+            Title = "Выберите обложку",
+            AllowMultiple = false,
+            FileTypeFilter = new List<FilePickerFileType>
             {
-                Title = "Выберите обложку",
-                AllowMultiple = false,
-                FileTypeFilter = new List<FilePickerFileType>
+                new FilePickerFileType("Изображения")
                 {
-                    new FilePickerFileType("Изображения")
-                    {
-                        Patterns = new List<string> { "*.png", "*.jpg", "*.jpeg", "*.webp" }
-                    }
+                    Patterns = new List<string> { "*.png", "*.jpg", "*.jpeg", "*.webp" }
                 }
-            });
+            }
+        });
 
         if (files is { Count: > 0 })
             CoverPathBox.Text = files[0].Path.LocalPath;
@@ -95,48 +94,54 @@ public partial class BookEditPage : ContentPage
             return;
         }
 
-        var selectedGenreIds = _genres.Where(g => g.IsSelected).Select(g => g.Genre.Id).ToList();
+        var selectedGenreIds = _genres
+            .Where(g => g.IsSelected)
+            .Select(g => g.Genre.Id)
+            .ToList();
 
         if (_existingBook is null)
-        {
-            var newBook = new Book
-            {
-                Name = name,
-                Description = DescriptionBox.Text?.Trim(),
-                CoverPath = CoverPathBox.Text?.Trim(),
-                Text = TextBox.Text?.Trim(),
-                AuthorId = _currentUser.Id,
-                IsFrozen = false
-            };
-            _db.Books.Add(newBook);
-            _db.SaveChanges();
-
-            foreach (var genreId in selectedGenreIds)
-                _db.Genrebooks.Add(new Genrebook { BookId = newBook.Id, GenreId = genreId });
-            _db.SaveChanges();
-        }
+            CreateBook(name, selectedGenreIds);
         else
-        {
-            var book = _db.Books
-                .Include(b => b.Genrebooks)
-                .First(b => b.Id == _existingBook.Id);
-
-            book.Name = name;
-            book.Description = DescriptionBox.Text?.Trim();
-            book.CoverPath = CoverPathBox.Text?.Trim();
-            book.Text = TextBox.Text?.Trim();
-
-            _db.Genrebooks.RemoveRange(book.Genrebooks);
-            foreach (var genreId in selectedGenreIds)
-                _db.Genrebooks.Add(new Genrebook { BookId = book.Id, GenreId = genreId });
-            _db.SaveChanges();
-        }
+            UpdateBook(name, selectedGenreIds);
 
         ShowStatus("Сохранено успешно!", Brushes.Green);
         _onSaved?.Invoke();
 
-        System.Threading.Tasks.Task.Delay(800).ContinueWith(_ =>
-            Avalonia.Threading.Dispatcher.UIThread.Post(() => _onBack?.Invoke()));
+        Task.Delay(800).ContinueWith(_ =>
+            Dispatcher.UIThread.Post(() => _onBack?.Invoke()));
+    }
+
+    private void CreateBook(string name, List<int> genreIds)
+    {
+        var book = new Book
+        {
+            Name = name,
+            Description = DescriptionBox.Text?.Trim(),
+            CoverPath = CoverPathBox.Text?.Trim(),
+            Text = TextBox.Text?.Trim(),
+            AuthorId = _currentUser.Id,
+            IsFrozen = false
+        };
+        _db.Books.Add(book);
+        _db.SaveChanges();
+
+        foreach (var genreId in genreIds)
+            _db.Genrebooks.Add(new Genrebook { BookId = book.Id, GenreId = genreId });
+        _db.SaveChanges();
+    }
+
+    private void UpdateBook(string name, List<int> genreIds)
+    {
+        var book = _db.Books.Include(b => b.Genrebooks).First(b => b.Id == _existingBook!.Id);
+        book.Name = name;
+        book.Description = DescriptionBox.Text?.Trim();
+        book.CoverPath = CoverPathBox.Text?.Trim();
+        book.Text = TextBox.Text?.Trim();
+
+        _db.Genrebooks.RemoveRange(book.Genrebooks);
+        foreach (var genreId in genreIds)
+            _db.Genrebooks.Add(new Genrebook { BookId = book.Id, GenreId = genreId });
+        _db.SaveChanges();
     }
 
     private void ShowStatus(string msg, IBrush color)
