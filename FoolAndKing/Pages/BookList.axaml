@@ -5,11 +5,10 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="FoolAndKing.Pages.BookList">
     <Grid RowDefinitions="Auto,Auto,Auto,*">
-        <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="16,12,16,0">
-            <StackPanel Orientation="Horizontal" Spacing="8" x:Name="ListTabsPanel">
-            </StackPanel>
-        </ScrollViewer>
 
+        <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="16,12,16,0">
+            <StackPanel Orientation="Horizontal" Spacing="8" x:Name="ListTabsPanel"/>
+        </ScrollViewer>
         <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="12" Margin="16,10,16,0">
             <TextBox x:Name="SearchBox" Watermark="Поиск по названию или автору..." Width="260" TextChanged="OnSearchChanged"/>
             <ComboBox x:Name="SortBox" Width="160" SelectedIndex="0" SelectionChanged="OnSortChanged">
@@ -19,7 +18,6 @@
                 <ComboBoxItem Content="По оценке (ниже)"/>
             </ComboBox>
         </StackPanel>
-
         <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="16,8,16,0">
             <ItemsControl x:Name="GenreFilter">
                 <ItemsControl.ItemsPanel>
@@ -53,9 +51,8 @@
                                     </Border>
                                     <TextBlock Text="{Binding BookName}" FontWeight="SemiBold" FontSize="12" TextWrapping="Wrap" MaxLines="2"/>
                                     <TextBlock Text="{Binding AuthorName}" FontSize="11" Foreground="Gray"/>
-                                    <TextBlock Text="{Binding AverageScore, StringFormat='Рейтинг {0:0.0}'}" FontSize="11" Foreground="Yellow"/>
-                                    <ComboBox x:Name="MoveToBox" Tag="{Binding}" FontSize="11" HorizontalAlignment="Stretch" SelectionChanged="OnMoveToListChanged">
-                                    </ComboBox>
+                                    <TextBlock Text="{Binding AverageScoreText}" FontSize="11" Foreground="#E8A020"/>
+                                    <ComboBox ItemsSource="{Binding OtherLists}" DisplayMemberBinding="{Binding Name}" PlaceholderText="Переместить в..." Tag="{Binding}" FontSize="11" HorizontalAlignment="Stretch" SelectionChanged="OnMoveToListChanged"/>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
@@ -63,5 +60,6 @@
                 </ItemsControl>
             </ScrollViewer>
         </Grid>
+
     </Grid>
 </ContentPage>

@@ -31,7 +31,7 @@
                                             </Border>
                                             <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="13" TextWrapping="Wrap" MaxLines="2"/>
                                             <TextBlock Text="{Binding GenresText}" FontSize="11" Foreground="Gray" TextWrapping="Wrap"/>
-                                            <TextBlock Text="{Binding AverageScore, StringFormat='Рейтинг {0:0.0}'}" FontSize="11" Foreground="#E8A020"/>
+                                            <TextBlock Text="{Binding AverageScore, StringFormat='Рейтинг {0:0.0}'}" FontSize="11" Foreground="Yellow"/>
                                             <Button Content="Редактировать" FontSize="11" Padding="6,4" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Tag="{Binding}" Click="OnEditBookClick"/>
                                         </StackPanel>
                                     </Border>

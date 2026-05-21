@@ -4,5 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="FoolAndKing.Pages.FrozenPage">
-    Welcome to Avalonia!
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="16" MaxWidth="480" Margin="32">
+        <TextBlock Text="Ваш аккаунт заморожен" FontSize="22" FontWeight="Bold" Foreground="#C0392B" HorizontalAlignment="Center"/>
+        <Border Background="#FFF3F3" BorderBrush="#F5C6C6" BorderThickness="1" CornerRadius="8" Padding="20">
+            <StackPanel Spacing="12">
+                <TextBlock Text="Причина заморозки:" FontWeight="SemiBold" Foreground="#C0392B"/>
+                <TextBlock x:Name="ReasonText" Text="Решение администратора." Foreground="#C0392B" FontSize="13" TextWrapping="Wrap"/>
+                <TextBlock Text="Некоторые функции приложения вам недоступны." Foreground="#C0392B" FontSize="13" TextWrapping="Wrap"/>
+                <Border BorderBrush="#F5C6C6" BorderThickness="0,1,0,0" Padding="0,12,0,0">
+                    <TextBlock Text="Чтобы оспорить заморозку — перейдите в Профиль." Foreground="#888" FontSize="13" TextWrapping="Wrap"/>
+                </Border>
+            </StackPanel>
+        </Border>
+    </StackPanel>
 </ContentPage>

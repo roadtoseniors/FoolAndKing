@@ -73,9 +73,12 @@ public partial class BookPage : ContentPage
 
     private void OnFreezeBookClick(object? sender, RoutedEventArgs e)
     {
-        _book.IsFrozen = !_book.IsFrozen;
+        var book = _db.Books.Find(_book.Id);
+        if (book is null) return;
+        book.IsFrozen = !book.IsFrozen;
         _db.SaveChanges();
-        BtnFreeze.Content = _book.IsFrozen ? "Разморозить книгу" : "Заморозить книгу";
+        _book.IsFrozen = book.IsFrozen;
+        BtnFreeze.Content = book.IsFrozen ? "Разморозить книгу" : "Заморозить книгу";
     }
 
     private void OnSubmitFeedbackClick(object? sender, RoutedEventArgs e)
@@ -103,7 +106,7 @@ public partial class BookPage : ContentPage
         => await ShowClaimDialog(bookId: _book.Id, feedbackId: null);
 
     private async void OnClaimAuthorClick(object? sender, RoutedEventArgs e)
-        => await ShowClaimDialog(bookId: null, feedbackId: null);
+        => await ShowClaimDialog(bookId: _book.Id, feedbackId: null, isAuthorClaim: true);
 
     private async void OnClaimFeedbackClick(object? sender, RoutedEventArgs e)
     {
@@ -114,18 +117,26 @@ public partial class BookPage : ContentPage
     private void OnFreezeFeedbackClick(object? sender, RoutedEventArgs e)
     {
         if (sender is not Button { Tag: FeedbackViewModel vm }) return;
-        var fb = _db.Feedbacks.Find(vm.Feedback.Id);
+
+        var fb = _db.Feedbacks
+            .Include(f => f.Claims)
+            .FirstOrDefault(f => f.Id == vm.Feedback.Id);
+
         if (fb is null) return;
+        
+        _db.Claims.RemoveRange(fb.Claims);
         _db.Feedbacks.Remove(fb);
         _db.SaveChanges();
         LoadBook();
     }
 
-    private async System.Threading.Tasks.Task ShowClaimDialog(int? bookId, int? feedbackId)
+    private async System.Threading.Tasks.Task ShowClaimDialog(int? bookId, int? feedbackId, bool isAuthorClaim = false)
     {
         var reasons = _db.Reasons.ToList();
 
-        var dialog = new Window { Title = "Жалоба", Width = 360, Height = 280, CanResize = false };
+        var title = isAuthorClaim ? "Жалоба на автора" : feedbackId is not null ? "Жалоба на отзыв" : "Жалоба на книгу";
+
+        var dialog = new Window { Title = title, Width = 360, Height = 280, CanResize = false };
         var stack = new StackPanel { Margin = new Avalonia.Thickness(16), Spacing = 8 };
 
         stack.Children.Add(new TextBlock { Text = "Выберите причину жалобы:" });
@@ -158,7 +169,9 @@ public partial class BookPage : ContentPage
                 BookId = bookId,
                 FeedBackId = feedbackId,
                 ReasonId = reason.Id,
-                Description = descBox.Text?.Trim()
+                Description = isAuthorClaim
+                    ? $"[AuthorId:{_book.AuthorId}] {descBox.Text?.Trim()}"
+                    : descBox.Text?.Trim()
             });
             _db.SaveChanges();
             dialog.Close();

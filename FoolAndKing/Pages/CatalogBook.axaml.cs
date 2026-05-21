@@ -27,9 +27,9 @@ public partial class CatalogBook : ContentPage
         _currentUser = user;
         _navigate = navigate;
         InitializeComponent();
+        _isLoaded = true; // ставим ДО загрузки
         LoadGenres();
         LoadBooks();
-        _isLoaded = true;
     }
 
     private void LoadGenres()
@@ -47,7 +47,7 @@ public partial class CatalogBook : ContentPage
 
     private void ApplyFilters()
     {
-        if (!_isLoaded || BookGrid is null) return;
+        if (BookGrid is null) return; // убрали проверку _isLoaded
 
         var search = SearchBox?.Text?.Trim().ToLower() ?? "";
         var sort = SortBox?.SelectedIndex ?? 0;
@@ -74,8 +74,17 @@ public partial class CatalogBook : ContentPage
         BookGrid.ItemsSource = filtered.ToList();
     }
 
-    private void OnSearchChanged(object? sender, TextChangedEventArgs e) => ApplyFilters();
-    private void OnSortChanged(object? sender, SelectionChangedEventArgs e) => ApplyFilters();
+    private void OnSearchChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (!_isLoaded) return;
+        ApplyFilters();
+    }
+    private void OnSortChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (!_isLoaded) return; // флаг только здесь
+        ApplyFilters();
+    }
+
 
     private void OnGenreToggled(object? sender, RoutedEventArgs e)
     {

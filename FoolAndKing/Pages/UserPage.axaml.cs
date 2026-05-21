@@ -46,15 +46,17 @@ public partial class UserPage : ContentPage
     private void SetupFrozenBanner()
     {
         FrozenBanner.IsVisible = _currentUser.IsFrozen;
-
         if (!_currentUser.IsFrozen) return;
+
+        FrozenReasonText.Text = "Причина: решение администратора.";
+        FrozenReasonText.IsVisible = true;
 
         var hasAppeal = _db.Requestfrozens.Any(r => r.UserId == _currentUser.Id);
         if (hasAppeal)
         {
             BtnAppeal.IsEnabled = false;
             AppealText.IsEnabled = false;
-            AppealStatus.Text = "Заявка на оспаривание уже отправлена. Ожидайте решения администратора.";
+            AppealStatus.Text = "Заявка на оспаривание уже отправлена. Ожидайте решения.";
             AppealStatus.Foreground = Brushes.Gray;
             AppealStatus.IsVisible = true;
         }

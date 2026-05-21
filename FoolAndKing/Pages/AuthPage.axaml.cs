@@ -74,7 +74,7 @@ public partial class AuthPage : ContentPage
 
     private void OnLoginClick(object? sender, RoutedEventArgs e)
     {
-        var login    = LoginTextBox.Text?.Trim();
+        var login = LoginTextBox.Text?.Trim();
         var password = PasswordTextBox.Text;
 
         LoginErrorText.IsVisible = false;
@@ -92,13 +92,6 @@ public partial class AuthPage : ContentPage
             ShowLoginError("Неверный логин или пароль.");
             return;
         }
-
-        if (user.IsFrozen)
-        {
-            ShowLoginError("Ваш аккаунт заморожен.");
-            return;
-        }
-
         Navigation.PushAsync(new MainPage(_db, user));
     }
     

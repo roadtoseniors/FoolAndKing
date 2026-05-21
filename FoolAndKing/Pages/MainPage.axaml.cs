@@ -26,11 +26,11 @@ public partial class MainPage : ContentPage
         _currentUser = user;
 
         _catalogPage = new CatalogBook(_db, _currentUser, ShowPage);
-        _bookListPage = new BookList();
+        _bookListPage = new BookList(_db, _currentUser);
         _adminPage = new AdminPage();
         _authorPage = new AutorPage(_db, _currentUser, ShowPage);
         _userPage = new UserPage(_db, _currentUser);
-        _frozenPage = new FrozenPage();
+        _frozenPage = new FrozenPage(_db, _currentUser);
 
         SetupSidebar();
 

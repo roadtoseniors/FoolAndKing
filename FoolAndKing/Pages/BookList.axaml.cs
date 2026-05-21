@@ -13,11 +13,11 @@ public partial class BookList : ContentPage
 {
     private readonly MyDbContext _db;
     private readonly User _currentUser;
-
     private List<Readinglist> _readinglists = new();
     private int _currentListId;
     private readonly HashSet<int> _selectedGenres = new();
     private List<BookListItemViewModel> _currentBooks = new();
+    private bool _isLoaded;
 
     public BookList() : this(new MyDbContext(), new User()) { }
 
@@ -26,8 +26,9 @@ public partial class BookList : ContentPage
         _db = db;
         _currentUser = user;
         InitializeComponent();
-        LoadReadinglists();
+        _isLoaded = true;
         LoadGenres();
+        LoadReadinglists();
     }
 
     private void LoadReadinglists()
@@ -52,8 +53,8 @@ public partial class BookList : ContentPage
         _currentListId = _readinglists[0].Id;
         if (ListTabsPanel.Children[0] is ToggleButton first)
             first.IsChecked = true;
-
-        LoadBooks();
+        else
+            LoadBooks(); // на случай если IsChecked не сработал
     }
 
     private void OnListTabChanged(object? sender, RoutedEventArgs e)
@@ -67,7 +68,6 @@ public partial class BookList : ContentPage
         _currentListId = listId;
         LoadBooks();
     }
-
 
     private void LoadGenres()
     {
@@ -84,7 +84,6 @@ public partial class BookList : ContentPage
         }
     }
 
-
     private void LoadBooks()
     {
         _currentBooks = _db.Userreadinglists
@@ -93,7 +92,7 @@ public partial class BookList : ContentPage
             .Include(u => u.Book).ThenInclude(b => b.Genrebooks).ThenInclude(gb => gb.Genre)
             .Where(u => u.UserId == _currentUser.Id && u.ReadingListId == _currentListId)
             .AsEnumerable()
-            .Select(u => new BookListItemViewModel(u, _readinglists, _currentListId))
+            .Select(u => new BookListItemViewModel(u, _readinglists))
             .ToList();
 
         ApplyFilters();
@@ -101,11 +100,10 @@ public partial class BookList : ContentPage
 
     private void ApplyFilters()
     {
-        if (_currentBooks is null || BookGrid is null) return;
+        if (BookGrid is null) return;
 
         var search = SearchBox?.Text?.Trim().ToLower() ?? "";
         var sort = SortBox?.SelectedIndex ?? 0;
-
         var filtered = _currentBooks.AsEnumerable();
 
         if (!string.IsNullOrEmpty(search))
@@ -131,14 +129,23 @@ public partial class BookList : ContentPage
         EmptyText.IsVisible = list.Count == 0;
     }
 
-    private void OnSearchChanged(object? sender, TextChangedEventArgs e) => ApplyFilters();
-    private void OnSortChanged(object? sender, SelectionChangedEventArgs e) => ApplyFilters();
-    
+    private void OnSearchChanged(object? sender, TextChangedEventArgs e)
+    {
+        if (!_isLoaded) return;
+        ApplyFilters();
+    }
+
+    private void OnSortChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (!_isLoaded) return;
+        ApplyFilters();
+    }
+
     private void OnMoveToListChanged(object? sender, SelectionChangedEventArgs e)
     {
+        if (!_isLoaded) return;
         if (sender is not ComboBox { Tag: BookListItemViewModel vm,
             SelectedItem: Readinglist targetList }) return;
-
         if (targetList.Id == _currentListId) return;
 
         var entry = _db.Userreadinglists.Find(vm.Entry.Id);
@@ -149,14 +156,8 @@ public partial class BookList : ContentPage
             u.BookId == vm.Entry.BookId &&
             u.ReadingListId == targetList.Id);
 
-        if (exists)
-        {
-            _db.Userreadinglists.Remove(entry);
-        }
-        else
-        {
-            entry.ReadingListId = targetList.Id;
-        }
+        if (exists) _db.Userreadinglists.Remove(entry);
+        else entry.ReadingListId = targetList.Id;
 
         _db.SaveChanges();
         LoadBooks();
@@ -171,10 +172,10 @@ public class BookListItemViewModel
     public string? CoverPath => Entry.Book.CoverPath;
     public double AverageScore => Entry.Book.Feedbacks.Count > 0
         ? Entry.Book.Feedbacks.Average(f => (double)f.Score) : 0;
-
+    public string AverageScoreText => $"Рейтинг {AverageScore:0.0}";
     public List<Readinglist> OtherLists { get; }
 
-    public BookListItemViewModel(Userreadinglist entry, List<Readinglist> allLists, int currentListId)
+    public BookListItemViewModel(Userreadinglist entry, List<Readinglist> allLists)
     {
         Entry = entry;
         OtherLists = allLists.ToList();
